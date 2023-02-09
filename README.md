@@ -13,6 +13,7 @@ Included libraries
 - [openssl](https://www.openssl.org)
 - [libcrypt4gh](https://github.com/CSCfi/libcrypt4gh)
 - [libcrypt4gh-keys](https://github.com/CSCfi/libcrypt4gh-keys)
+- [libb64](https://github.com/libb64/libb64)
 
 ## How to use this container
 Build the image with

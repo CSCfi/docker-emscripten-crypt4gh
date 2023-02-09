@@ -43,7 +43,7 @@ COPY --from=SODIUM /src/libsodium-stable/libsodium-js-sumo/include/ /emsdk/upstr
 COPY --from=SODIUM /src/libsodium-stable/libsodium-js-sumo/lib/ /emsdk/upstream/lib/
 
 ADD https://api.github.com/repos/cscfi/libcrypt4gh/compare/main...HEAD /dev/null
-RUN git clone https://github.com/CSCfi/libcrypt4gh
+RUN git clone --single-branch https://github.com/CSCfi/libcrypt4gh
 
 # We'll skip linking libraries since emcc only produces static libraries
 # Linking sodium at this point causes a linker conflict – thus cutting out $(LIBS)
@@ -71,7 +71,7 @@ RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/
     && apt-get install -yq autoconf build-essential
 
 ADD https://api.github.com/repos/cscfi/libcrypt4gh-keys/compare/main...HEAD /dev/null
-RUN git clone https://github.com/CSCfi/libcrypt4gh-keys.git
+RUN git clone --single-branch https://github.com/CSCfi/libcrypt4gh-keys.git
 
 # We'll skip linking libraries since emcc only produces static libraries
 # Linking sodium at this point causes a linker conflict – thus cutting out $(LIBS)
@@ -83,6 +83,14 @@ RUN export EMCC_CFLAGS="-I/emsdk/upstream/include -L/emsdk/upstream/lib" \
     && emconfigure ./configure --prefix=/emsdk/upstream --with-openssl=/emsdk/upstream \
     && emmake make \
     && emmake make install
+
+# Build libb64
+FROM emscripten/emsdk:$EMSCRIPTEN_VERSION AS LIBB64
+
+ADD https://api.github.com/repos/libb64/libb64/compare/master...HEAD /dev/null
+RUN git clone --single-branch https://github.com/libb64/libb64.git \
+    && cd libb64 \
+    && emmake make all_src
 
 # Build wasm application
 FROM emscripten/emsdk:$EMSCRIPTEN_VERSION AS WASMCRYPT
@@ -99,6 +107,9 @@ COPY --from=LIBCRYPT4GH /emsdk/upstream/lib/ /emsdk/upstream/lib/
 
 COPY --from=LIBCRYPT4GHKEYS /emsdk/upstream/include/ /emsdk/upstream/include/
 COPY --from=LIBCRYPT4GHKEYS /emsdk/upstream/lib/ /emsdk/upstream/lib/
+
+COPY --from=LIBB64 /src/libb64/src/libb64.a /emsdk/upstream/lib/libb64.a
+COPY --from=LIBB64 /src/libb64/include/ /emsdk/upstream/include/
 
 COPY build_wasm.sh /bin/build_wasm.sh
 
