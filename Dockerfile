@@ -14,12 +14,12 @@ RUN tar xvf libsodium-${LIBSODIUM_VERSION}.tar.gz \
 # Build openssl
 FROM emscripten/emsdk:$EMSCRIPTEN_VERSION AS OPENSSL
 
-ARG OPENSSL_VERSION=1.1.1t
+ARG OPENSSL_VERSION=1.1.1u
 
 ADD https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz .
 ADD https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz.sha256 .
 
-RUN bash -c 'if [[ $(sha256sum < openssl-${OPENSSL_VERSION}.tar.gz) != *$(cat openssl-${OPENSSL_VERSION}.tar.gz.sha256)* ]]; then echo $(sha256sum < openssl-${OPENSSL_VERSION}.tar.gz) $(curl https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz.sha256); echo Downloaded file checksum does not match. ; exit 1; fi' \
+RUN bash -c 'echo "$(cat openssl-${OPENSSL_VERSION}.tar.gz.sha256) openssl-${OPENSSL_VERSION}.tar.gz" | sha256sum --check || exit 1' \
     && tar xvf openssl-${OPENSSL_VERSION}.tar.gz \
     && cd openssl-${OPENSSL_VERSION} \
     && emconfigure ./Configure linux-generic64 no-asm no-threads no-engine no-hw no-weak-ssl-ciphers no-dtls no-shared no-dso --prefix=/emsdk/upstream \
