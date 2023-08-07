@@ -23,7 +23,7 @@ jobs:
         uses: snok/container-retention-policy@v2.1.1
         with:
           image-names: ${{ env.REGISTRY }}/${{ env.REPO }}
-          filter-tags: sha-*,sha256:*
+          filter-tags: "sha-*", "sha256:*"
           cut-off: A week ago UTC
           account-type: org
           org-name: ${{ github.repository_owner }}
