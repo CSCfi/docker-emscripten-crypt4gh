@@ -9,6 +9,7 @@ ADD https://download.libsodium.org/libsodium/releases/libsodium-${LIBSODIUM_VERS
 
 RUN tar xvf libsodium-${LIBSODIUM_VERSION}.tar.gz \
     && cd libsodium-stable \
+    && sed -i -e 's/WASM_INITIAL_MEMORY=4MB/WASM_INITIAL_MEMORY=8MB/g' dist-build/emscripten.sh \
     && dist-build/emscripten.sh --sumo
 
 # Build openssl
