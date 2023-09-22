@@ -1,9 +1,9 @@
-ARG EMSCRIPTEN_VERSION=3.1.43
+ARG EMSCRIPTEN_VERSION=3.1.46
 
 # Build libsodium
 FROM emscripten/emsdk:$EMSCRIPTEN_VERSION AS SODIUM
 
-ARG LIBSODIUM_VERSION=1.0.18-stable
+ARG LIBSODIUM_VERSION=1.0.19-stable
 
 ADD https://download.libsodium.org/libsodium/releases/libsodium-${LIBSODIUM_VERSION}.tar.gz .
 
@@ -14,7 +14,7 @@ RUN tar xvf libsodium-${LIBSODIUM_VERSION}.tar.gz \
 # Build openssl
 FROM emscripten/emsdk:$EMSCRIPTEN_VERSION AS OPENSSL
 
-ARG OPENSSL_VERSION=1.1.1u
+ARG OPENSSL_VERSION=1.1.1w
 
 ADD https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz .
 ADD https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz.sha256 .
