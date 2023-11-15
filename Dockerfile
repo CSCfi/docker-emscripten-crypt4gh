@@ -4,7 +4,7 @@ ARG EMSDK_IMAGE=emscripten/emsdk
 # Build libsodium
 FROM ${EMSDK_IMAGE}:${EMSCRIPTEN_VERSION} AS SODIUM
 
-ARG LIBSODIUM_VERSION=1.0.18-stable
+ARG LIBSODIUM_VERSION=1.0.19-stable
 
 ADD https://download.libsodium.org/libsodium/releases/libsodium-${LIBSODIUM_VERSION}.tar.gz .
 
@@ -16,7 +16,7 @@ RUN tar xvf libsodium-${LIBSODIUM_VERSION}.tar.gz \
 # Build openssl
 FROM ${EMSDK_IMAGE}:${EMSCRIPTEN_VERSION} AS OPENSSL
 
-ARG OPENSSL_VERSION=1.1.1u
+ARG OPENSSL_VERSION=3.1.4
 
 ADD https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz .
 ADD https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz.sha256 .
@@ -28,7 +28,7 @@ RUN bash -c 'echo "$(cat openssl-${OPENSSL_VERSION}.tar.gz.sha256) openssl-${OPE
     && sed -i 's|^CROSS_COMPILE.*$|CROSS_COMPILE=|g' Makefile \
     && sed -i '/^CFLAGS/ s/$/ -D__STDC_NO_ATOMICS__=1/' Makefile \
     && sed -i '/^CXXFLAGS/ s/$/ -D__STDC_NO_ATOMICS__=1/' Makefile \
-    && emmake make -j 2 all \
+    && emmake make -j$(nproc) all \
     && emmake make install
 
 # Build libcrypt4gh
@@ -70,10 +70,10 @@ COPY --from=OPENSSL /emsdk/upstream/lib/ /emsdk/upstream/lib/
 RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/apt \
     apt-get update -q \
     && apt-get upgrade -yq -o Dpkg::Options::="--force-confold" \
-    && apt-get install -yq autoconf build-essential
+    && apt-get install -yq autoconf build-essential pkg-config
 
-ADD https://api.github.com/repos/cscfi/libcrypt4gh-keys/compare/main...HEAD /dev/null
-RUN git clone https://github.com/CSCfi/libcrypt4gh-keys.git
+ADD https://api.github.com/repos/umccr/libcrypt4gh-keys/compare/main...HEAD /dev/null
+RUN git clone https://github.com/umccr/libcrypt4gh-keys.git
 
 # We'll skip linking libraries since emcc only produces static libraries
 # Linking sodium at this point causes a linker conflict – thus cutting out $(LIBS)
