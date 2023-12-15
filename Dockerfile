@@ -3,7 +3,7 @@ ARG EMSCRIPTEN_VERSION=3.1.51
 # Build libsodium
 FROM emscripten/emsdk:$EMSCRIPTEN_VERSION AS SODIUM
 
-ARG LIBSODIUM_VERSION=1.0.18-stable
+ARG LIBSODIUM_VERSION=1.0.19-stable
 
 ADD https://download.libsodium.org/libsodium/releases/libsodium-${LIBSODIUM_VERSION}.tar.gz .
 
