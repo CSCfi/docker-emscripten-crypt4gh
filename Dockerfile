@@ -72,8 +72,8 @@ RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/
     && apt-get upgrade -yq -o Dpkg::Options::="--force-confold" \
     && apt-get install -yq autoconf build-essential pkg-config
 
-ADD https://api.github.com/repos/umccr/libcrypt4gh-keys/compare/main...HEAD /dev/null
-RUN git clone https://github.com/umccr/libcrypt4gh-keys.git
+ADD https://api.github.com/repos/CSCfi/libcrypt4gh-keys/compare/main...HEAD /dev/null
+RUN git clone https://github.com/CSCfi/libcrypt4gh-keys.git
 
 # We'll skip linking libraries since emcc only produces static libraries
 # Linking sodium at this point causes a linker conflict – thus cutting out $(LIBS)
