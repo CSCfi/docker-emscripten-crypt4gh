@@ -1,7 +1,8 @@
 ARG EMSCRIPTEN_VERSION=3.1.51
+ARG EMSDK_IMAGE=docker.io/emscripten/emsdk
 
 # Build libsodium
-FROM docker.io/emscripten/emsdk:$EMSCRIPTEN_VERSION AS SODIUM
+FROM ${EMSDK_IMAGE}:${EMSCRIPTEN_VERSION} AS SODIUM
 
 ARG LIBSODIUM_VERSION=1.0.19-stable
 
@@ -9,10 +10,11 @@ ADD https://download.libsodium.org/libsodium/releases/libsodium-${LIBSODIUM_VERS
 
 RUN tar xvf libsodium-${LIBSODIUM_VERSION}.tar.gz \
     && cd libsodium-stable \
+    && sed -i -e 's/WASM_INITIAL_MEMORY=4MB/WASM_INITIAL_MEMORY=8MB/g' dist-build/emscripten.sh \
     && dist-build/emscripten.sh --sumo
 
 # Build openssl
-FROM docker.io/emscripten/emsdk:$EMSCRIPTEN_VERSION AS OPENSSL
+FROM ${EMSDK_IMAGE}:${EMSCRIPTEN_VERSION} AS OPENSSL
 
 ARG OPENSSL_VERSION=1.1.1w
 
@@ -30,7 +32,7 @@ RUN bash -c 'echo "$(cat openssl-${OPENSSL_VERSION}.tar.gz.sha256) openssl-${OPE
     && emmake make install
 
 # Build libcrypt4gh
-FROM docker.io/emscripten/emsdk:$EMSCRIPTEN_VERSION AS LIBCRYPT4GH
+FROM ${EMSDK_IMAGE}:${EMSCRIPTEN_VERSION} AS LIBCRYPT4GH
 
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 
@@ -57,7 +59,7 @@ RUN  export EMCC_CFLAGS="-I/emsdk/upstream/include -L/emsdk/upstream/lib" \
     && emmake make install
 
 # Build libcrypt4gh-keys
-FROM docker.io/emscripten/emsdk:$EMSCRIPTEN_VERSION AS LIBCRYPT4GHKEYS
+FROM ${EMSDK_IMAGE}:${EMSCRIPTEN_VERSION} AS LIBCRYPT4GHKEYS
 
 COPY --from=SODIUM /src/libsodium-stable/libsodium-js-sumo/include/ /emsdk/upstream/include/
 COPY --from=SODIUM /src/libsodium-stable/libsodium-js-sumo/lib/ /emsdk/upstream/lib/
@@ -85,7 +87,7 @@ RUN export EMCC_CFLAGS="-I/emsdk/upstream/include -L/emsdk/upstream/lib" \
     && emmake make install
 
 # Build wasm application
-FROM docker.io/emscripten/emsdk:$EMSCRIPTEN_VERSION AS WASMCRYPT
+FROM ${EMSDK_IMAGE}:${EMSCRIPTEN_VERSION} AS WASMCRYPT
 
 LABEL maintainer="CSC Developers"
 LABEL org.label-schema.schema-version="1.0"

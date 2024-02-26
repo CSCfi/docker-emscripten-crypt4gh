@@ -30,7 +30,9 @@ Build your application
 ## Extras
 You can provide argument variables to change which library versions get built.
 
-`emscripten`, `libsodium`, and `openssl` versions can be changed with `--build-arg` by changing the value of `EMSCRIPTEN_VERSION`, `LIBSODIUM_VERSION`, and `OPENSSL_VERSION`.
+`emscripten`, `libsodium`, and `openssl` versions can be changed with `--build-arg` by changing the value of `EMSCRIPTEN_VERSION`, `LIBSODIUM_VERSION`, `EMSDK_IMAGE` and `OPENSSL_VERSION`.
+
+>__NOTE:__ To build only ARM images use -arm in version tag and for ARM built images. For example `EMSDK_IMAGE --build-arg="EMSDK_IMAGE=<local-registry>/emscripten/emsdk"  --build-arg="EMSCRIPTEN_VERSION=3.1.21-arm"` instructs to use locally build emsdk:3.1.21-arm container. 
 
 # License
 
