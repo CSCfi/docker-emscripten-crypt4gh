@@ -1,4 +1,4 @@
-ARG EMSCRIPTEN_VERSION=3.1.54
+ARG EMSCRIPTEN_VERSION=3.1.57
 ARG EMSDK_IMAGE=docker.io/emscripten/emsdk
 
 # Build libsodium
